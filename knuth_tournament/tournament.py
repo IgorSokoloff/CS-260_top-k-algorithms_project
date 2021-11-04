@@ -29,7 +29,7 @@
 import math
 
 
-class KThMaximum:
+class TournamentTopK:
     def __init__(self):
         pass
 
@@ -324,9 +324,9 @@ class KThMaximum:
 
 
 input = [2, 16, 5, 13, 14, 8, 17, 10]
-kthMaximum = KThMaximum()
+tournament = TournamentTopK()
 
 k = 4
-tenMinimum = kthMaximum.getMaximumKSortedElements(input, k)
+tenMinimum = tournament.getMaximumKSortedElements(input, k)
 print("Top {}: {}".format(k, tenMinimum))
 

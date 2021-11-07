@@ -30,9 +30,9 @@ import math
 import numpy as np
 
 class TournamentTopK:
-    def __init__(self):
+    def __init__(self, debug=False):
         self.numberOfComparisons = 0
-        pass
+        self.debug = debug
 
     #    @param inputArray
     #               unordered array of non-negative integers
@@ -117,8 +117,9 @@ class TournamentTopK:
     #
 
     def getOutputTree(self, values):
-        print("Tree:")
-        print("========")
+        if self.debug:
+            print("Tree:")
+            print("========")
         size = len(values)
         treeDepth = math.log(size) / math.log(2)
         intTreeDepth = math.ceil(treeDepth) + 1
@@ -126,7 +127,7 @@ class TournamentTopK:
 
         # first row is the input
         outputTree[0] = values
-        print(outputTree[0])
+        if self.debug: print(outputTree[0])
 
         currentRow = values
         # intnextRow = None
@@ -134,8 +135,8 @@ class TournamentTopK:
             nextRow = self.getNextRow(currentRow)
             outputTree[i] = nextRow
             currentRow = nextRow
-            print(outputTree[i])
-        print("========")
+            if self.debug: print(outputTree[i])
+        if self.debug: print("========")
 
         return outputTree
 
@@ -284,8 +285,8 @@ class TournamentTopK:
                                     + " it must be root element")
                 else:
                     rootIndex = rootIndex * 2
-                    adjacencyList[level - 1][0] = -1
-                    adjacencyList[level - 1][1] = -1
+                    adjacencyList[i - 1][0] = (0, 0)
+                    adjacencyList[i - 1][1] = -1
                     continue
 
             # one of the adjacent number must be root (max value).
@@ -351,6 +352,11 @@ class TournamentTopK:
 
 
 input = [2, 16, 5, 12, -14, 8, -17, 10]
+sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
+# input1 = [-0.12113328864268563, 0.3155317518898621, -0.3103550576282231, 0.6748797431357719, -0.07374189293421433]
+# input2 = [-0.04396085650674794, 0.6096451410950671, -0.28666606252832233, 0.3632054776854945, 1.1813390739400884]
+# input = [np.random.normal() for i in list(range(5))]
+input = sample_matrix[0]
 tournament = TournamentTopK()
 
 k = 4

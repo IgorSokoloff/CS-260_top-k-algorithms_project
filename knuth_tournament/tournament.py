@@ -352,11 +352,11 @@ class TournamentTopK:
 
 
 input = [2, 16, 5, 12, -14, 8, -17, 10]
-sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
+# sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
 # input1 = [-0.12113328864268563, 0.3155317518898621, -0.3103550576282231, 0.6748797431357719, -0.07374189293421433]
 # input2 = [-0.04396085650674794, 0.6096451410950671, -0.28666606252832233, 0.3632054776854945, 1.1813390739400884]
 # input = [np.random.normal() for i in list(range(5))]
-input = sample_matrix[0]
+# input = sample_matrix[0]
 tournament = TournamentTopK()
 
 k = 4

@@ -27,7 +27,7 @@
 #  */
 
 import math
-
+import numpy as np
 
 class TournamentTopK:
     def __init__(self):
@@ -52,7 +52,11 @@ class TournamentTopK:
     #
 
     def getMaximumKSortedElements(self, inputArray, k):
-        return self.findKthMaximum(inputArray, k)
+        outputArray = np.zeros(len(inputArray))
+        topKElements, numberOfComparisons = self.findKthMaximum(inputArray, k)
+        for element, index in topKElements:
+            outputArray[index] = element
+        return outputArray, numberOfComparisons
 
     #   First output tree will be obtained using tournament method. For k
     #   maximum, the output tree will be backtracked k-1 times for each sub tree
@@ -346,10 +350,10 @@ class TournamentTopK:
 
 
 
-input = [2, 16, 5, 16, 14, 8, 17, 10]
+input = [2, 16, 5, 12, -14, 8, -17, 10]
 tournament = TournamentTopK()
 
 k = 4
-tenMinimum, numberOfComparisons = tournament.getMaximumKSortedElements(input, k)
-print("Top {}: {}".format(k, tenMinimum))
+topK, numberOfComparisons = tournament.getMaximumKSortedElements(input, k)
+print("Top {}: {}".format(k, topK))
 print("Total number Of comparisons:", numberOfComparisons)

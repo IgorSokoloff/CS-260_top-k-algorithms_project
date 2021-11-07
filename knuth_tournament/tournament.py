@@ -104,7 +104,7 @@ class TournamentTopK:
             rootIndex = fullAdjacencyList[kthRow][kthColumn][1]
 
             # Delete kth element from fullAdjacencyList
-            del fullAdjacencyList[kthRow][kthColumn]
+            # del fullAdjacencyList[kthRow][kthColumn]
 
         return partiallySorted, self.numberOfComparisons
 
@@ -188,8 +188,6 @@ class TournamentTopK:
         j = 0
         k = 0
         temp = (-1, -1)
-        
-        comparisonCounter = 0
 
         # for _ in range(0, kth):
         # j is the index of the adjacencyList for (j+1)th largest item 
@@ -200,20 +198,19 @@ class TournamentTopK:
                 for k in range(0, len(partialAdjacencyList)):
                     temp = partialAdjacencyList[k][0]
 
-                    # We don't need this condition anymore since we are removing kth element from the fullAdjacencyList
-                    # if temp >= kMinusOneMin:
-                        # continue
+                    self.numberOfComparisons += 1
+                    if abs(temp[0]) >= abs(kMinusOneMin[0]):
+                        continue
 
                     #This condition is useful if we don't want to count duplicates
                     #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
 
-                    comparisonCounter += 1
+                    self.numberOfComparisons += 1
                     if (abs(temp[0]) > kThMax[0]):
                         kThMax = (abs(temp[0]), temp[1])
                         maxIndex[0] = j
                         maxIndex[1] = k
         
-        self.numberOfComparisons += comparisonCounter 
         return maxIndex
 
     #  Back-tracks a sub-tree (specified by the level and index) parameter and

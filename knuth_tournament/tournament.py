@@ -203,8 +203,8 @@ class TournamentTopK:
                     #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
 
                     comparisonCounter += 1
-                    if (temp[0] > kThMax[0]):
-                        kThMax = temp
+                    if (abs(temp[0]) > kThMax[0]):
+                        kThMax = (abs(temp[0]), temp[1])
                         maxIndex[0] = j
                         maxIndex[1] = k
         
@@ -312,7 +312,9 @@ class TournamentTopK:
     #  @return
     #
     def getMax(self, num1, num2):
-        return max(num1, num2)
+        if abs(num1[0]) > abs(num2[0]):
+            return num1
+        return num2
 
     #  following uses Math.ceil(double) to round to upper integer value..since
     #  this function takes double value, diving an int by double results in

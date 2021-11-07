@@ -104,7 +104,9 @@ class TournamentTopK:
             rootIndex = fullAdjacencyList[kthRow][kthColumn][1]
 
             # Delete kth element from fullAdjacencyList
-            # del fullAdjacencyList[kthRow][kthColumn]
+            fullAdjacencyList[kthRow][kthColumn] = []
+ 
+
 
         return partiallySorted, self.numberOfComparisons
 
@@ -196,11 +198,14 @@ class TournamentTopK:
             partialAdjacencyList = fullAdjacencyList[j]
             if partialAdjacencyList != None:
                 for k in range(0, len(partialAdjacencyList)):
+                    if not partialAdjacencyList[k]:
+                        continue
+
                     temp = partialAdjacencyList[k][0]
 
-                    self.numberOfComparisons += 1
-                    if abs(temp[0]) >= abs(kMinusOneMin[0]):
-                        continue
+                    # self.numberOfComparisons += 1
+                    # if abs(temp[0]) >= abs(kMinusOneMin[0]):
+                        # continue
 
                     #This condition is useful if we don't want to count duplicates
                     #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):

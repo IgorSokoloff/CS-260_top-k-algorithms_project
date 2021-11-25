@@ -40,6 +40,7 @@ def partition5(arr, left, right):
     while i <= right:
         j = i
         while j > left and arr[j-1] > arr[j]:
+            quickselect.N_COMPARISONS_QS += 1
             swap(arr, j-1, j)
             j = j - 1
         i =  i + 1
@@ -61,6 +62,7 @@ def medianPivot(arr, left, right):
     for i in range(left, right, 5):
         # Get the median position of the i'th five-element subgroup
         subRight = i + 4
+        quickselect.N_COMPARISONS_QS += 1
         if subRight > right:
             subRight = right
         median5 = partition5(arr, i, subRight)
@@ -68,20 +70,22 @@ def medianPivot(arr, left, right):
 
     # compute the median of the n/5 medians-of-five
     mid = (right - left) // 10 + left + 1
-    return quickselect(arr, mid, left, left + math.floor((right - left) / 5), pivotType=PivotType.MEDIAN, returnIndex=True)
+    return quickselect(arr, mid, left=left, right=left + math.floor((right - left) / 5), pivotType=PivotType.MEDIAN, returnIndex=True)
 
 
-def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotType.RANDOM, returnIndex = False):
-    if left is None or right is None:
-        quickselect.N_COMPARISONS_QS = 0
-        arr = arr.copy()
-        left = 0
-        right = len(arr) - 1
+def quickselect(arr, k, left, right, key=lambda x: x, pivotType=PivotType.RANDOM, returnIndex = False):
+    # if left is None or right is None:
+    #     quickselect.N_COMPARISONS_QS = 0  
+    #     arr = arr.copy()
+    #     left = 0
+    #     right = len(arr) - 1
+
     if left == right:
         if returnIndex:
             return left
         else:
             return arr[left]
+    quickselect.N_COMPARISONS_QS += 1
 
     # Random Pivot
     if pivotType == PivotType.RANDOM:
@@ -104,19 +108,22 @@ def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotT
         else:
             return arr[k]
     elif k < p:
+        quickselect.N_COMPARISONS_QS += 1
         return quickselect(arr, k, left, p - 1, key, pivotType, returnIndex=returnIndex)
     else:
         return quickselect(arr, k, p + 1, right, key, pivotType, returnIndex=returnIndex)
 
 
 def topk(arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
+    quickselect.N_COMPARISONS_QS = 0
     # key=lambda x: -key(x) we find top, so the order is reversed
     n = len(arr)
     if not inplace:
         arr = arr.copy()
     if k < 1 or k > n:
         raise UserWarning('k Value is outside of 1...N')
-    kth = quickselect(arr, k-1, key=lambda x: -key(x), pivotType=pivotType)
+    
+    kth = quickselect(arr.copy(), k-1, left = 0, right = len(arr) - 1, key=lambda x: -key(x), pivotType=pivotType)
     equals = []
     removed = 0
     for i in range(len(arr)):
@@ -125,6 +132,7 @@ def topk(arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
             removed += 1
             arr[i] = 0
         elif abs(kth) == abs(arr[i]):
+            quickselect.N_COMPARISONS_QS += 1
             equals.append(i)
     #stupid part
     for i in equals:

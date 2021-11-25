@@ -46,20 +46,6 @@ def partition5(arr, left, right):
             
     return math.floor((left + right) / 2)
 
-# Source: Cormen, Thomas H.; Leiserson, Charles E.; Rivest, Ronald L.; Stein, Clifford (2009) [1990]. Introduction to Algorithms (3rd ed.). MIT Press and McGraw-Hill. ISBN 0-262-03384-4.
-# Return the true median of a list
-def selectTrueMedian(arr, k, left, right, key):
-    while(True):
-        if left == right:
-            return left
-        pivotIndex = medianPivot(arr, left, right, key)
-        pivotIndex = partition(arr, left, right, pivotIndex, key)
-        if k == pivotIndex:
-            return k
-        elif k < pivotIndex:
-            right = pivotIndex - 1
-        else:
-            left = pivotIndex + 1
 
 # Source: Cormen, Thomas H.; Leiserson, Charles E.; Rivest, Ronald L.; Stein, Clifford (2009) [1990]. Introduction to Algorithms (3rd ed.). MIT Press and McGraw-Hill. ISBN 0-262-03384-4.
 # Median-of-medians algorithm
@@ -67,7 +53,7 @@ def selectTrueMedian(arr, k, left, right, key):
 # 2- Get the median of each group and move it to the front. By the end, all medians will be in the first n/5 positions
 # 3- Compute the true median of the n/5 medians
 # 4- Call quickselect 
-def medianPivot(arr, left, right, key):
+def medianPivot(arr, left, right):
     # for 5 or less elements just get median
     if (right - left) < 5:
         return partition5(arr, left, right)
@@ -82,17 +68,20 @@ def medianPivot(arr, left, right, key):
 
     # compute the median of the n/5 medians-of-five
     mid = (right - left) // 10 + left + 1
-    return selectTrueMedian(arr, mid, left, left + math.floor((right - left) / 5), key)
+    return quickselect(arr, mid, left, left + math.floor((right - left) / 5), pivotType=PivotType.MEDIAN, returnIndex=True)
 
 
-def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotType.RANDOM):
+def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotType.RANDOM, returnIndex = False):
     if left is None or right is None:
         quickselect.N_COMPARISONS_QS = 0
         arr = arr.copy()
         left = 0
         right = len(arr) - 1
     if left == right:
-        return arr[left]
+        if returnIndex:
+            return left
+        else:
+            return arr[left]
 
     # Random Pivot
     if pivotType == PivotType.RANDOM:
@@ -104,17 +93,20 @@ def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotT
 
     # Median-of-medians Pivot 
     else:
-        p = medianPivot(arr, left, right, key)
-
+        p = medianPivot(arr, left, right)
 
     p = partition(arr, left, right, p, key)
+
     quickselect.N_COMPARISONS_QS += 1
     if k == p:
-        return arr[k]
+        if returnIndex:
+            return k
+        else:
+            return arr[k]
     elif k < p:
-        return quickselect(arr, k, left, p - 1, key, pivotType)
+        return quickselect(arr, k, left, p - 1, key, pivotType, returnIndex=returnIndex)
     else:
-        return quickselect(arr, k, p + 1, right, key, pivotType)
+        return quickselect(arr, k, p + 1, right, key, pivotType, returnIndex=returnIndex)
 
 
 def topk(arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):

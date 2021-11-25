@@ -27,7 +27,7 @@ def partition(arr, left, right, p, key):
     p = left
     for i in range(left, right):
         quickselect.N_COMPARISONS_QS += 1
-        if key(arr[i]) <= key(pivot):
+        if key(abs(arr[i])) <= key(abs(pivot)):
             swap(arr, i, p)
             p = p + 1
     swap(arr, p, right)
@@ -129,10 +129,10 @@ def topk(arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
     removed = 0
     for i in range(len(arr)):
         quickselect.N_COMPARISONS_QS += 1
-        if arr[i] < kth:
+        if abs(arr[i]) < abs(kth):
             removed += 1
             arr[i] = 0
-        elif kth == arr[i]:
+        elif abs(kth) == abs(arr[i]):
             equals.append(i)
     #stupid part
     for i in equals:

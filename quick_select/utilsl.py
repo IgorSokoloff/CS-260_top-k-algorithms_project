@@ -168,12 +168,26 @@ def test_complexity(type='average', nmax = 5000, nmin=20, step = 1000, average =
 
 
 if __name__ == '__main__':
-    arr = [1, 1, 1, 1, 1, 1, 1, 1, 1] * 1000
-    test_complexity(type='worst')
-    exit(0)
-    pivotType = PivotType.DETERMINISTIC
-    top = quickselect(arr, 2, pivotType=pivotType)
-    topk(arr, 7, pivotType=pivotType)
-    print(quickselect.N_COMPARISONS_QS)
-    test(pivotType=pivotType)
-    print(quickselect.N_COMPARISONS_QS)
+    # arr = [1, 1, 1, 1, 1, 1, 1, 1, 1] * 1000
+    # test_complexity(type='worst')
+    # exit(0)
+    # pivotType = PivotType.DETERMINISTIC
+    # top = quickselect(arr, 2, pivotType=pivotType)
+    # topk(arr, 7, pivotType=pivotType)
+    # print(quickselect.N_COMPARISONS_QS)
+    # test(pivotType=pivotType)
+    # print(quickselect.N_COMPARISONS_QS)
+
+        
+    arr = np.random.rand(100000)
+    quickselect.N_COMPARISONS_QS = 0
+    top = topk(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
+    print("Random Pivot:\t\t", quickselect.N_COMPARISONS_QS)
+
+    quickselect.N_COMPARISONS_QS = 0
+    top = topk(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
+    print("Deterministic Pivot:\t", quickselect.N_COMPARISONS_QS)
+
+    quickselect.N_COMPARISONS_QS = 0
+    top = topk(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
+    print("Median Pivot:\t\t", quickselect.N_COMPARISONS_QS)

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from enum import Enum
+import math
 sys.setrecursionlimit(15000)
 
 N_COMPARISONS_QS__ = 0
@@ -32,6 +33,57 @@ def partition(arr, left, right, p, key):
     swap(arr, p, right)
     return p
 
+# Source: Cormen, Thomas H.; Leiserson, Charles E.; Rivest, Ronald L.; Stein, Clifford (2009) [1990]. Introduction to Algorithms (3rd ed.). MIT Press and McGraw-Hill. ISBN 0-262-03384-4.
+# Return median of a group with at most 5 elements 
+def partition5(arr, left, right):
+    i = left + 1
+    while i <= right:
+        j = i
+        while j > left and arr[j-1] > arr[j]:
+            swap(arr, j-1, j)
+            j = j - 1
+        i =  i + 1
+            
+    return math.floor((left + right) / 2)
+
+# Source: Cormen, Thomas H.; Leiserson, Charles E.; Rivest, Ronald L.; Stein, Clifford (2009) [1990]. Introduction to Algorithms (3rd ed.). MIT Press and McGraw-Hill. ISBN 0-262-03384-4.
+# Return the true median of a list
+def selectTrueMedian(arr, k, left, right, key):
+    while(True):
+        if left == right:
+            return left
+        pivotIndex = medianPivot(arr, left, right, key)
+        pivotIndex = partition(arr, left, right, pivotIndex, key)
+        if k == pivotIndex:
+            return k
+        elif k < pivotIndex:
+            right = pivotIndex - 1
+        else:
+            left = pivotIndex + 1
+
+# Source: Cormen, Thomas H.; Leiserson, Charles E.; Rivest, Ronald L.; Stein, Clifford (2009) [1990]. Introduction to Algorithms (3rd ed.). MIT Press and McGraw-Hill. ISBN 0-262-03384-4.
+# Median-of-medians algorithm
+# 1- Divides the array into groups of 5 elements
+# 2- Get the median of each group and move it to the front. By the end, all medians will be in the first n/5 positions
+# 3- Compute the true median of the n/5 medians
+# 4- Call quickselect 
+def medianPivot(arr, left, right, key):
+    # for 5 or less elements just get median
+    if (right - left) < 5:
+        return partition5(arr, left, right)
+    # Otherwise move the medians of five-element subgroups to the first n/5 positions
+    for i in range(left, right, 5):
+        # Get the median position of the i'th five-element subgroup
+        subRight = i + 4
+        if subRight > right:
+            subRight = right
+        median5 = partition5(arr, i, subRight)
+        swap(arr, median5, left + math.floor((i - left)/5))
+
+    # compute the median of the n/5 medians-of-five
+    mid = (right - left) // 10 + left + 1
+    return selectTrueMedian(arr, mid, left, left + math.floor((right - left) / 5), key)
+
 
 def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotType.RANDOM):
     if left is None or right is None:
@@ -49,6 +101,10 @@ def quickselect(arr, k, left=None, right=None, key=lambda x: x, pivotType=PivotT
     # Deterministic Pivot - choose middle index
     elif pivotType == PivotType.DETERMINISTIC:
         p = left + (abs(left-right))//2
+
+    # Median-of-medians Pivot 
+    else:
+        p = medianPivot(arr, left, right, key)
 
 
     p = partition(arr, left, right, p, key)

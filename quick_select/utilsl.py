@@ -188,14 +188,14 @@ if __name__ == '__main__':
 
         
     arr = np.random.rand(100000)
-    quickselect.N_COMPARISONS_QS = 0
+    # quickselect.N_COMPARISONS_QS = 0
     top = topk(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
     print("Random Pivot:\t\t", quickselect.N_COMPARISONS_QS)
 
-    quickselect.N_COMPARISONS_QS = 0
+    # quickselect.N_COMPARISONS_QS = 0
     top = topk(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
     print("Deterministic Pivot:\t", quickselect.N_COMPARISONS_QS)
 
-    quickselect.N_COMPARISONS_QS = 0
+    # quickselect.N_COMPARISONS_QS = 0
     top = topk(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
     print("Median Pivot:\t\t", quickselect.N_COMPARISONS_QS)

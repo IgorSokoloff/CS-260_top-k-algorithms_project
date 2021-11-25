@@ -119,9 +119,9 @@ class TournamentTopK:
     #
 
     def getOutputTree(self, values):
-        if self.debug:
-            print("Tree:")
-            print("========")
+        # if self.debug:
+            # print("Tree:")
+            # print("========")
         size = len(values)
         treeDepth = math.log(size) / math.log(2)
         intTreeDepth = math.ceil(treeDepth) + 1
@@ -129,7 +129,7 @@ class TournamentTopK:
 
         # first row is the input
         outputTree[0] = values
-        if self.debug: print(outputTree[0])
+        # if self.debug: print(outputTree[0])
 
         currentRow = values
         # intnextRow = None
@@ -137,8 +137,8 @@ class TournamentTopK:
             nextRow = self.getNextRow(currentRow)
             outputTree[i] = nextRow
             currentRow = nextRow
-            if self.debug: print(outputTree[i])
-        if self.debug: print("========")
+            # if self.debug: print(outputTree[i])
+        # if self.debug: print("========")
 
         return outputTree
 
@@ -166,7 +166,7 @@ class TournamentTopK:
             else:
                 row[i] = self.getMax(values[j], values[j+1])
             i += 1
-        self.numberOfComparisons += i 
+        self.numberOfComparisons += (i+1) 
         return row
 
     #  From the passed full adjacency list and max value scans the list and
@@ -196,25 +196,26 @@ class TournamentTopK:
         # k is the index of the kth largest item in the adjacencyList[j]
         for j in range(0, len(fullAdjacencyList)):
             partialAdjacencyList = fullAdjacencyList[j]
-            if partialAdjacencyList != None:
-                for k in range(0, len(partialAdjacencyList)):
-                    if not partialAdjacencyList[k]:
-                        continue
+            # if partialAdjacencyList != None:
+            for k in range(0, len(partialAdjacencyList)):
+                self.numberOfComparisons += 1
+                if not partialAdjacencyList[k]:
+                    continue
 
-                    temp = partialAdjacencyList[k][0]
+                temp = partialAdjacencyList[k][0]
 
-                    # self.numberOfComparisons += 1
-                    # if abs(temp[0]) >= abs(kMinusOneMin[0]):
-                        # continue
+                # self.numberOfComparisons += 1
+                # if abs(temp[0]) >= abs(kMinusOneMin[0]):
+                    # continue
 
-                    #This condition is useful if we don't want to count duplicates
-                    #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
+                #This condition is useful if we don't want to count duplicates
+                #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
 
-                    self.numberOfComparisons += 1
-                    if (abs(temp[0]) > kThMax[0]):
-                        kThMax = (abs(temp[0]), temp[1])
-                        maxIndex[0] = j
-                        maxIndex[1] = k
+                self.numberOfComparisons += 1
+                if (abs(temp[0]) > kThMax[0]):
+                    kThMax = (abs(temp[0]), temp[1])
+                    maxIndex[0] = j
+                    maxIndex[1] = k
         
         return maxIndex
 
@@ -271,6 +272,7 @@ class TournamentTopK:
             # because of odd number of elements in array, you need to do
             # following
             # check. if you don't, this case will blow {8, 4, 5, 6, 1, 2}
+            self.numberOfComparisons += 1
             if (len(rowAbove) >= ((adjacentleftIndex + 1) + 1)):
                 adjacentRightIndex = adjacentleftIndex + 1
                 adjacentRightElement = rowAbove[adjacentRightIndex]
@@ -279,6 +281,7 @@ class TournamentTopK:
 
             # if there is no right adjacent value, then adjacent left must be
             # root continue the loop.
+            self.numberOfComparisons += 2
             if adjacentRightElement == -1:
                 # just checking for error condition
                 if adjacentleftElement != rootElement:
@@ -294,14 +297,17 @@ class TournamentTopK:
             # one of the adjacent number must be root (max value).
             # Get the other number and compared with second max so far
             if adjacentleftElement == rootElement and adjacentRightElement != rootElement:
+                self.numberOfComparisons += 2
                 rootIndex = rootIndex * 2
                 adjacencyList[i - 1][0] = adjacentRightElement
                 adjacencyList[i - 1][1] = rootIndex + 1
             elif adjacentleftElement != rootElement and adjacentRightElement == rootElement:
+                self.numberOfComparisons += 4
                 rootIndex = rootIndex * 2 + 1
                 adjacencyList[i - 1][0] = adjacentleftElement
                 adjacencyList[i - 1][1] = rootIndex - 1
             elif adjacentleftElement == rootElement and adjacentRightElement == rootElement:
+                self.numberOfComparisons += 6
                 # This is case where the root element is repeating, we are not
                 # handling this case.
                 raise Exception(

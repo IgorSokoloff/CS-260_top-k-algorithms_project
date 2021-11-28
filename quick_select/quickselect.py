@@ -179,7 +179,9 @@ class Quickselect:
             plt.show()
 
 
-myQuickselect = Quickselect()
+
+#TEST 1
+# myQuickselect = Quickselect()
 # arr = [1, 1, 1, 1, 1, 1, 1, 1, 1] * 10
 # quickselect.test_complexity(type='worst')
 # exit(0)
@@ -190,13 +192,16 @@ myQuickselect = Quickselect()
 # myQuickselect.test(pivotType=pivotType)
 # print(myQuickselect.numberOfComparisons)
 
-    
-arr = np.random.rand(100000)
-top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
-print("Random Pivot:\t\t", numberOfComparisons)
 
-top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
-print("Deterministic Pivot:\t", numberOfComparisons)
 
-top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
-print("Median Pivot:\t\t", numberOfComparisons)
+#TEST 2
+# myQuickselect = Quickselect()    
+# arr = np.random.rand(100000)
+# top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
+# print("Random Pivot:\t\t", numberOfComparisons)
+
+# top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
+# print("Deterministic Pivot:\t", numberOfComparisons)
+
+# top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
+# print("Median Pivot:\t\t", numberOfComparisons)

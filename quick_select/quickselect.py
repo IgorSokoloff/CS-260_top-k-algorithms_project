@@ -117,7 +117,7 @@ class Quickselect:
             return self.quickselect(arr, k, p + 1, right, key, pivotType, returnIndex=returnIndex)
 
 
-    def getTopK(self, arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
+    def getTopK(self, arr, k, key=lambda x: x, inplace=False, pivotType = PivotType.RANDOM):
         self.numberOfComparisons = 0
         # key=lambda x: -key(x) we find top, so the order is reversed
         n = len(arr)
@@ -170,7 +170,7 @@ class Quickselect:
             else:
                 arr = np.random.rand(n)
             for _ in range(average):
-                self.getTopK(arr,k,pivotType=pivotType)
+                self.getTopK(arr,k,inplace=True, pivotType=pivotType)
                 iters += self.numberOfComparisons
             iters /= average
             niters[i] = iters
@@ -187,7 +187,7 @@ class Quickselect:
 # exit(0)
 # pivotType = PivotType.DETERMINISTIC
 # top = myQuickselect.quickselect(arr, 2, left = 0, right = len(arr) - 1, pivotType=pivotType)
-# myQuickselect.getTopK(arr, 7, pivotType=pivotType)
+# myQuickselect.getTopK(arr, 7, inplace=True, pivotType=pivotType)
 # print(myQuickselect.numberOfComparisons)
 # myQuickselect.test(pivotType=pivotType)
 # print(myQuickselect.numberOfComparisons)

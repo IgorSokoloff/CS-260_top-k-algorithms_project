@@ -51,7 +51,8 @@ class TournamentTopK:
     #   @return k ordered maximum values
     #
 
-    def getMaximumKSortedElements(self, inputArray, k):
+    def getTopK(self, inputArray, k):
+        self.numberOfComparisons = 0
         outputArray = np.zeros(len(inputArray))
         topKElements, numberOfComparisons = self.findKthMaximum(inputArray, k)
         for element, index in topKElements:
@@ -368,6 +369,6 @@ class TournamentTopK:
 # tournament = TournamentTopK()
 
 # k = 4
-# topK, numberOfComparisons = tournament.getMaximumKSortedElements(input, k)
+# topK, numberOfComparisons = tournament.getTopK(input, k)
 # print("Top {}: {}".format(k, topK))
 # print("Total number Of comparisons:", numberOfComparisons)

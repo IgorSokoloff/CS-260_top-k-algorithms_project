@@ -117,7 +117,7 @@ class Quickselect:
             return self.quickselect(arr, k, p + 1, right, key, pivotType, returnIndex=returnIndex)
 
 
-    def topk(self, arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
+    def getTopK(self, arr, k, key=lambda x: x, inplace=True, pivotType = PivotType.RANDOM):
         self.numberOfComparisons = 0
         # key=lambda x: -key(x) we find top, so the order is reversed
         n = len(arr)
@@ -144,19 +144,19 @@ class Quickselect:
                 arr[i] = 0
                 removed += 1
         if not inplace:
-            return arr
+            return arr, self.numberOfComparisons
 
     def test(self, pivotType=PivotType.RANDOM):
         arr = [1, 9, 4, 5, 63]
-        top = self.topk(arr, 1, inplace=False, pivotType=pivotType)
+        top = self.getTopK(arr, 1, inplace=False, pivotType=pivotType)
         assert top == [0, 0, 0, 0, 63]
-        top = self.topk(arr, 2, inplace=False, pivotType=pivotType)
+        top = self.getTopK(arr, 2, inplace=False, pivotType=pivotType)
         assert top == [0, 9, 0, 0, 63]
-        top = self.topk(arr, 3, inplace=False, pivotType=pivotType)
+        top = self.getTopK(arr, 3, inplace=False, pivotType=pivotType)
         assert top == [0, 9, 0, 5, 63]
-        top = self.topk(arr, 4, inplace=False, pivotType=pivotType)
+        top = self.getTopK(arr, 4, inplace=False, pivotType=pivotType)
         assert top == [0, 9, 4, 5, 63]
-        top = self.topk(arr, 5, inplace=False, pivotType=pivotType)
+        top = self.getTopK(arr, 5, inplace=False, pivotType=pivotType)
         assert top == [1, 9, 4, 5, 63]
 
     def test_complexity(self, type='average', nmax = 5000, nmin=20, step = 1000, average = 10, k=10, output=None, pivotType=PivotType.RANDOM):
@@ -170,7 +170,7 @@ class Quickselect:
             else:
                 arr = np.random.rand(n)
             for _ in range(average):
-                self.topk(arr,k,pivotType=pivotType)
+                self.getTopK(arr,k,pivotType=pivotType)
                 iters += self.numberOfComparisons
             iters /= average
             niters[i] = iters
@@ -185,18 +185,18 @@ myQuickselect = Quickselect()
 # exit(0)
 # pivotType = PivotType.DETERMINISTIC
 # top = myQuickselect.quickselect(arr, 2, left = 0, right = len(arr) - 1, pivotType=pivotType)
-# myQuickselect.topk(arr, 7, pivotType=pivotType)
+# myQuickselect.getTopK(arr, 7, pivotType=pivotType)
 # print(myQuickselect.numberOfComparisons)
 # myQuickselect.test(pivotType=pivotType)
 # print(myQuickselect.numberOfComparisons)
 
     
 arr = np.random.rand(100000)
-top = myQuickselect.topk(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
-print("Random Pivot:\t\t", myQuickselect.numberOfComparisons)
+top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.RANDOM)
+print("Random Pivot:\t\t", numberOfComparisons)
 
-top = myQuickselect.topk(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
-print("Deterministic Pivot:\t", myQuickselect.numberOfComparisons)
+top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.DETERMINISTIC)
+print("Deterministic Pivot:\t", numberOfComparisons)
 
-top = myQuickselect.topk(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
-print("Median Pivot:\t\t", myQuickselect.numberOfComparisons)
+top, numberOfComparisons = myQuickselect.getTopK(arr, 5, inplace=False, pivotType=PivotType.MEDIAN)
+print("Median Pivot:\t\t", numberOfComparisons)

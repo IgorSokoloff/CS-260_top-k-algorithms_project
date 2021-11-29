@@ -105,11 +105,18 @@ class TournamentTopK:
         rootIndex = 0
         level = len(outputTree)
         fullAdjacencyList = []
+        fullAdjacencyList_numpy = []
         for i in range(1, k):
-            fullAdjacencyList +=self.getAdjacencyList(outputTree, root, level, rootIndex)
+            newAdjacencyList = self.getAdjacencyList(outputTree, root, level, rootIndex)
             
-            # This is expected to take O(log(d)) comparisons
-            kThMax, maxIndex = self.getKthMaximumFromAdjacencyList(fullAdjacencyList, i, root)
+            fullAdjacencyList += newAdjacencyList
+            fullAdjacencyList_numpy += [abs(item.getElementValue()) for item in newAdjacencyList]
+            
+            # This is expected to take O(k*log(d)) comparisons
+            kThMax, maxIndex = self.getKthMaximumFromAdjacencyList(fullAdjacencyList, fullAdjacencyList_numpy)
+
+            
+            
             
             root = kThMax.element
             partiallySorted[i] = root
@@ -118,6 +125,7 @@ class TournamentTopK:
 
             # Delete kth element from fullAdjacencyList
             del fullAdjacencyList[maxIndex]
+            del fullAdjacencyList_numpy[maxIndex]
  
 
 
@@ -197,25 +205,34 @@ class TournamentTopK:
     #             value of k-1 max element
     #  @return
     #
-    def getKthMaximumFromAdjacencyList(self, fullAdjacencyList, kth, kMinusOneMin):
+    def getKthMaximumFromAdjacencyList(self, fullAdjacencyList, fullAdjacencyList_numpy):
         kThMax = self.AdjacencyElement((0, -1), -1, -1)
         temp = None
         maxIndex = 0
 
-        # maxIndex = np.argmax(fullAdjacencyList)
-        # kThMax = fullAdjacencyList[maxIndex]
-        # self.numberOfComparisons += len(fullAdjacencyList)
+        maxIndex = np.argmax(fullAdjacencyList_numpy)
+        kThMax = fullAdjacencyList[maxIndex]
+        self.numberOfComparisons += len(fullAdjacencyList)
 
-        for i in range(0, len(fullAdjacencyList)):
-            temp = fullAdjacencyList[i]
 
-            #This condition is useful if we don't want to count duplicates
-            #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
 
-            self.numberOfComparisons += 1
-            if (abs(temp.getElementValue()) > abs(kThMax.getElementValue())):
-                kThMax = temp
-                maxIndex = i
+        # for i in range(0, len(fullAdjacencyList)):
+        #     temp = fullAdjacencyList[i]
+            
+
+        #     #This condition is useful if we don't want to count duplicates
+        #     #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
+
+        #     self.numberOfComparisons += 1
+            
+            
+        #     if (abs(temp.getElementValue()) > abs(kThMax.getElementValue())):
+        #         kThMax = temp
+        #         maxIndex = i        
+            
+        
+        
+
         return kThMax, maxIndex
 
     #  Back-tracks a sub-tree (specified by the level and index) parameter and

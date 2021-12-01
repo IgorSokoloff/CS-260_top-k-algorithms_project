@@ -30,6 +30,23 @@ import math
 import numpy as np
 
 class TournamentTopK:
+
+    class AdjacencyElement:
+        def __init__(self, element, treeIndex, treeDepth):
+            self.element = element # (value, oringial index)
+            self.treeIndex = treeIndex
+            self.treeDepth = treeDepth
+        
+        def getElementValue(self):
+            return self.element[0]
+        
+        def __repr__(self):
+           return '{0}'.format(self.element)
+        
+        def __lt__(self, other):
+            return ((abs(self.element[0]) < abs(other.element[0])))
+
+
     def __init__(self, debug=False):
         self.numberOfComparisons = 0
         self.debug = debug
@@ -87,25 +104,28 @@ class TournamentTopK:
         partiallySorted[0] = root
         rootIndex = 0
         level = len(outputTree)
-        # fullAdjacencyList = [[[]] for i in range(k-1)]
         fullAdjacencyList = []
-        kThMaxIdx = []
+        fullAdjacencyList_numpy = []
         for i in range(1, k):
-            # fullAdjacencyList[i - 1] = self.getAdjacencyList(outputTree, root, level, rootIndex)
-            fullAdjacencyList.append(self.getAdjacencyList(outputTree, root, level, rootIndex))
+            newAdjacencyList = self.getAdjacencyList(outputTree, root, level, rootIndex)
             
-            # This is expected to take O(log(d)) comparisons
-            kThMaxIdx = self.getKthMaximumFromAdjacencyList(fullAdjacencyList, i, root)
+            fullAdjacencyList += newAdjacencyList
+            fullAdjacencyList_numpy += [abs(item.getElementValue()) for item in newAdjacencyList]
             
-            kthRow = kThMaxIdx[0]
-            kthColumn = kThMaxIdx[1]
-            root = fullAdjacencyList[kthRow][kthColumn][0]
+            # This is expected to take O(k*log(d)) comparisons
+            kThMax, maxIndex = self.getKthMaximumFromAdjacencyList(fullAdjacencyList, fullAdjacencyList_numpy)
+
+            
+            
+            
+            root = kThMax.element
             partiallySorted[i] = root
-            level = kthColumn + 1
-            rootIndex = fullAdjacencyList[kthRow][kthColumn][1]
+            level = kThMax.treeDepth + 1
+            rootIndex = kThMax.treeIndex
 
             # Delete kth element from fullAdjacencyList
-            fullAdjacencyList[kthRow][kthColumn] = []
+            del fullAdjacencyList[maxIndex]
+            del fullAdjacencyList_numpy[maxIndex]
  
 
 
@@ -185,40 +205,35 @@ class TournamentTopK:
     #             value of k-1 max element
     #  @return
     #
-    def getKthMaximumFromAdjacencyList(self, fullAdjacencyList, kth, kMinusOneMin):
-        kThMax = (float('-inf'), -1)
-        maxIndex = [None] * 2
-        j = 0
-        k = 0
-        temp = (-1, -1)
+    def getKthMaximumFromAdjacencyList(self, fullAdjacencyList, fullAdjacencyList_numpy):
+        kThMax = self.AdjacencyElement((0, -1), -1, -1)
+        temp = None
+        maxIndex = 0
 
-        # for _ in range(0, kth):
-        # j is the index of the adjacencyList for (j+1)th largest item 
-        # k is the index of the kth largest item in the adjacencyList[j]
-        for j in range(0, len(fullAdjacencyList)):
-            partialAdjacencyList = fullAdjacencyList[j]
-            # if partialAdjacencyList != None:
-            for k in range(0, len(partialAdjacencyList)):
-                self.numberOfComparisons += 1
-                if not partialAdjacencyList[k]:
-                    continue
+        maxIndex = np.argmax(fullAdjacencyList_numpy)
+        kThMax = fullAdjacencyList[maxIndex]
+        self.numberOfComparisons += len(fullAdjacencyList)
 
-                temp = partialAdjacencyList[k][0]
 
-                # self.numberOfComparisons += 1
-                # if abs(temp[0]) >= abs(kMinusOneMin[0]):
-                    # continue
 
-                #This condition is useful if we don't want to count duplicates
-                #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
+        # for i in range(0, len(fullAdjacencyList)):
+        #     temp = fullAdjacencyList[i]
+            
 
-                self.numberOfComparisons += 1
-                if (abs(temp[0]) > kThMax[0]):
-                    kThMax = (abs(temp[0]), temp[1])
-                    maxIndex[0] = j
-                    maxIndex[1] = k
+        #     #This condition is useful if we don't want to count duplicates
+        #     #if (temp[0] < kMinusOneMin[0]) and (temp[0] > kThMax[0]):
+
+        #     self.numberOfComparisons += 1
+            
+            
+        #     if (abs(temp.getElementValue()) > abs(kThMax.getElementValue())):
+        #         kThMax = temp
+        #         maxIndex = i        
+            
         
-        return maxIndex
+        
+
+        return kThMax, maxIndex
 
     #  Back-tracks a sub-tree (specified by the level and index) parameter and
     #  returns array of elements (during back-track path) along with their index
@@ -255,12 +270,13 @@ class TournamentTopK:
     #
 
     def getAdjacencyList(self, tree, rootElement, level, rootIndex):
-        adjacencyList = [[None]*2 for i in range(level - 1)]
+        adjacencyList = [self.AdjacencyElement(None, None, i) for i in range(level - 1)]
         adjacentleftElement = -1
         adjacentRightElement = -1
         adjacentleftIndex = -1
         adjacentRightIndex = -1
         rowAbove = []
+
 
         # we have to scan in reverse order
         for i in reversed(range(1, level)):
@@ -291,8 +307,8 @@ class TournamentTopK:
                                     + " it must be root element")
                 else:
                     rootIndex = rootIndex * 2
-                    adjacencyList[i - 1][0] = (0, 0)
-                    adjacencyList[i - 1][1] = -1
+                    adjacencyList[i - 1].element = (0, 0)
+                    adjacencyList[i - 1].treeIndex = -1
                     continue
 
             # one of the adjacent number must be root (max value).
@@ -300,13 +316,13 @@ class TournamentTopK:
             if adjacentleftElement == rootElement and adjacentRightElement != rootElement:
                 self.numberOfComparisons += 2
                 rootIndex = rootIndex * 2
-                adjacencyList[i - 1][0] = adjacentRightElement
-                adjacencyList[i - 1][1] = rootIndex + 1
+                adjacencyList[i - 1].element = adjacentRightElement
+                adjacencyList[i - 1].treeIndex = rootIndex + 1
             elif adjacentleftElement != rootElement and adjacentRightElement == rootElement:
                 self.numberOfComparisons += 4
                 rootIndex = rootIndex * 2 + 1
-                adjacencyList[i - 1][0] = adjacentleftElement
-                adjacencyList[i - 1][1] = rootIndex - 1
+                adjacencyList[i - 1].element = adjacentleftElement
+                adjacencyList[i - 1].treeIndex = rootIndex - 1
             elif adjacentleftElement == rootElement and adjacentRightElement == rootElement:
                 self.numberOfComparisons += 6
                 # This is case where the root element is repeating, we are not
@@ -360,12 +376,32 @@ class TournamentTopK:
 
 
 
+
+# def test():
+#     # input = [2, 16, 5, 13, 14, 8, 17, 10]
+#     input = np.random.rand(100000)
+#     input = np.load("SM_prior-normal_n-100_d-10000.npy")[0]
+#     # print(input.shape)
+#     tournament = TournamentTopK()
+#     k = 6700
+#     # k = 3
+#     topK, numberOfComparisons = tournament.getTopK(input, k)
+#     # print("Top {}: {}".format(k, topK))
+#     # print("Total number Of comparisons:", numberOfComparisons)
+
+# import time
+# start_time = time.time()
+# test()
+# end_time = (time.time() - start_time)
+# print("%.10f" % end_time)
+
+
 # input = [2, 16, 5, 12, -14, 8, -17, 10]
-# sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
-# input1 = [-0.12113328864268563, 0.3155317518898621, -0.3103550576282231, 0.6748797431357719, -0.07374189293421433]
-# input2 = [-0.04396085650674794, 0.6096451410950671, -0.28666606252832233, 0.3632054776854945, 1.1813390739400884]
-# input = [np.random.normal() for i in list(range(5))]
-# input = sample_matrix[0]
+# # sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
+# # input1 = [-0.12113328864268563, 0.3155317518898621, -0.3103550576282231, 0.6748797431357719, -0.07374189293421433]
+# # input2 = [-0.04396085650674794, 0.6096451410950671, -0.28666606252832233, 0.3632054776854945, 1.1813390739400884]
+# # input = [np.random.normal() for i in list(range(5))]
+# # input = sample_matrix[0]
 # tournament = TournamentTopK()
 
 # k = 4

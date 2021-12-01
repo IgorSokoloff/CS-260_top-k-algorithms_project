@@ -1,7 +1,7 @@
 from mpi4py import MPI
 import numpy as np
 from numpy.random import RandomState
-from knuth_tournament.tournament_new import *
+from knuth_tournament.tournament import *
 
 comm = MPI.COMM_WORLD
 numOfWorkers = comm.Get_size()

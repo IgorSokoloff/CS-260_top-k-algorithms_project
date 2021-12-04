@@ -45,7 +45,7 @@ class Quickselect:
         i = left + 1
         while i <= right:
             j = i
-            while j > left and arr[j-1] > arr[j]:
+            while j > left and abs(arr[j-1]) > abs(arr[j]):
                 self.numberOfComparisons += 1
                 self.swap(arr, j-1, j)
                 j = j - 1

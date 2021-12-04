@@ -92,6 +92,7 @@ class TournamentTopK:
             largestElement = tree[len(tree)-1][0]
             treeIndex = largestElement[2]
 
+            self.numberOfComparisons += 1
             if len(holdout) == 0:
                 del compute[treeIndex]
                 
@@ -218,36 +219,8 @@ class TournamentTopK:
 
 
 
-# import math
-
-# def test(input):
-#     # input = [2, 16, 5, 13, 14, 8, 17, 10]
-#     # inputWithIndex = []
-#     # for i in range(len(input)):
-#     #     inputWithIndex.append((input[i], i))
-
-#     # d = len(input)
-#     # k=7
-#     # size = d-k+2
-
-#     # print (inputWithIndex[:size])
-#     # d = 100000
-#     # input = np.random.rand(d)
-# #     input = np.load("SM_prior-normal_n-100_d-10000.npy")[0]
-# #     # print(input.shape)
-#     tournament = TournamentTopK()
-#     # k = 6700
-#     # k = int(0.7*d)
-#     # topK, numberOfComparisons = tournament.getTopK(input, k)
-# #     # print("Top {}: {}".format(k, topK))
-#     # print("Total number Of comparisons:", numberOfComparisons)
-#     out = tournament.getOutputTree(input)
-#     return out[len(out)-1][0]
-
 # import time
 # start_time = time.time()
-
-
 # d = 100000
 # input = np.random.rand(d)
 # k=int(0.7*d)
@@ -261,63 +234,4 @@ class TournamentTopK:
 # end_time = (time.time() - start_time)
 # print("%.10f" % end_time)
 
-# # import time
-# # start_time = time.time()
 
-
-
-
-# # input = [2, 16, 5, 13, 14, 8, 17, 10]
-# # inputWithIndex = []
-# # for i in range(len(input)):
-# #     inputWithIndex.append((input[i], i))
-
-# # d = len(input)
-# # k=7
-# # size = d-k+2
-
-# # while(len(input)>=size):
-# #     large = test(inputWithIndex[:size])
-# #     del input[large[1]]
-# #     inputWithIndex = []
-# #     for i in range(len(input)):
-# #         inputWithIndex.append((input[i], i))
-# # print(input)
-
-
-
-
-
-# # input = [2, 5, 13, 14, 8, 17, 10]
-# # inputWithIndex = []
-# # for i in range(len(input)):
-# #     inputWithIndex.append((input[i], i))
-
-# # test(inputWithIndex[:size])
-# # end_time = (time.time() - start_time)
-# # print("%.10f" % end_time)
-
-# # d = 100000
-# # k = int(0.7*d)
-
-# # com = d - k + (k)*(math.ceil(np.log(d)))
-
-# # for i in range(1,k):
-#     # com += (math.ceil(np.log(d) ))
-
-# # result = np.log(10) 
-# print(com)
-
-
-# input = [2, 16, 5, 12, -14, 8, -17, 10]
-# # sample_matrix = np.load("SM_prior-normal_n-100_d-100.npy")
-# # input1 = [-0.12113328864268563, 0.3155317518898621, -0.3103550576282231, 0.6748797431357719, -0.07374189293421433]
-# # input2 = [-0.04396085650674794, 0.6096451410950671, -0.28666606252832233, 0.3632054776854945, 1.1813390739400884]
-# # input = [np.random.normal() for i in list(range(5))]
-# # input = sample_matrix[0]
-# tournament = TournamentTopK()
-
-# k = 4
-# topK, numberOfComparisons = tournament.getTopK(input, k)
-# print("Top {}: {}".format(k, topK))
-# print("Total number Of comparisons:", numberOfComparisons)
